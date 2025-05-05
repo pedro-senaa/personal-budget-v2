@@ -33,8 +33,6 @@ async function createEnvelopesTable() {
         console.log('Envelopes table online');
     } catch (err) {
         console.error(`Error creating table : ${err}`);
-    } finally {
-        await pool.end();
     }
 }
 
