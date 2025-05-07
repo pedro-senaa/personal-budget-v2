@@ -36,7 +36,28 @@ async function createEnvelopesTable() {
     }
 }
 
+async function createTransactionsTable() {
+    const query = `
+    CREATE TABLE IF NOT EXISTS Transactions (
+    id SERIAL PRIMARY KEY,
+    envelope_id INTEGER NOT NULL REFERENCES Envelopes(id) ON DELETE CASCADE,
+    recipient TEXT NOT NULL, 
+    amount INTEGER NOT NULL CHECK (amount > 0),
+    transaction_date DATE NOT NULL DEFAULT CURRENT_DATE
+    )`;
+    try {
+        await pool.query(query);
+        console.log('Transactions table online');
+    } catch(err) {
+        console.error(`Error creating table: ${err}`)
+    }
+};
+
+
+
 testConnection();
 createEnvelopesTable();
+createTransactionsTable();
+
 
 module.exports = pool;

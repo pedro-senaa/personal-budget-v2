@@ -1,10 +1,10 @@
 const express = require('express');
 const pool = require('../database');
 const { envelopeChecker, checkForSubtractParam } = require('../utils');
-const apiRouter = express.Router();
+const envelopesRouter = express.Router();
 
 // param router for envelopeId: checks if envelope with given id
-apiRouter.param('envelopeId', async (req, res, next, envelopeId) => {
+envelopesRouter.param('envelopeId', async (req, res, next, envelopeId) => {
     try {
         const results = await pool.query(`
             SELECT * FROM envelopes WHERE id = $1 RETURNING *
@@ -22,7 +22,7 @@ apiRouter.param('envelopeId', async (req, res, next, envelopeId) => {
 });
 
 // param router for from: checks if id of from is in db
-apiRouter.param('from', async (req, res, next, from) => {
+envelopesRouter.param('from', async (req, res, next, from) => {
     try {
         const results = await pool.query(`
             SELECT * FROM Envelopes WHERE id = $1 RETURNING *`,
@@ -40,7 +40,7 @@ apiRouter.param('from', async (req, res, next, from) => {
 });
 
 // param router for to: checks if id of to is in db
-apiRouter.param('to', async (req, res, next, to) => {
+envelopesRouter.param('to', async (req, res, next, to) => {
     try {
         const results = await pool.query(`
             SELECT * FROM Envelopes WHERE id = $1 RETURNING *`,
@@ -58,7 +58,7 @@ apiRouter.param('to', async (req, res, next, to) => {
 });
 
 // GET all
-apiRouter.get('/', async (req, res, next) => {
+envelopesRouter.get('/', async (req, res, next) => {
     try {
         const results = await pool.query('SELECT * FROM envelopes');
         res.status(200).json(results.rows);
@@ -69,7 +69,7 @@ apiRouter.get('/', async (req, res, next) => {
 });
 
 // POST new envelope
-apiRouter.post('/', async (req, res, next) => {
+envelopesRouter.post('/', async (req, res, next) => {
     const isValidEnvelope = envelopeChecker(req.body);
     if (isValidEnvelope) {
         try {
@@ -89,7 +89,7 @@ apiRouter.post('/', async (req, res, next) => {
 });
 
 // PUT envelope at matching id
-apiRouter.put('/:envelopeId', async (req, res, next) => {
+envelopesRouter.put('/:envelopeId', async (req, res, next) => {
     const { name, amount } = req.body;
     const id = Number(req.params.envelopeId);
     try {
@@ -106,7 +106,7 @@ apiRouter.put('/:envelopeId', async (req, res, next) => {
 });
 
 //DELETE envelope at matching id
-apiRouter.delete('/:envelopeId', async (req, res, next) => {
+envelopesRouter.delete('/:envelopeId', async (req, res, next) => {
     const id = Number(req.params.envelopeId);
     try {
         const results = await pool.query(`
@@ -120,7 +120,7 @@ apiRouter.delete('/:envelopeId', async (req, res, next) => {
 });
 
 // POST route for subtracting amount (expect query.subract on the request)
-apiRouter.post('/:envelopeId', checkForSubtractParam, async (req, res, next) => {
+envelopesRouter.post('/:envelopeId', checkForSubtractParam, async (req, res, next) => {
     const subtract = req.query.subtract;
     const id = Number(req.params.envelopeId);
     try {
@@ -149,7 +149,7 @@ apiRouter.post('/:envelopeId', checkForSubtractParam, async (req, res, next) => 
 });
 
 //POST route for transfering from envelopeFrom to envelopeTo (expect body with amount property)
-apiRouter.post('/transfer/:from/:to', async (req, res, next) => {
+envelopesRouter.post('/transfer/:from/:to', async (req, res, next) => {
     const { envelopeFrom, envelopeTo } = req.body;
     const amount = Number(req.body.amount);
     // checks if envelopeFrom has enough money
@@ -198,4 +198,4 @@ apiRouter.post('/transfer/:from/:to', async (req, res, next) => {
 
 
 
-module.exports = apiRouter;
+module.exports = envelopesRouter;

@@ -1,11 +1,11 @@
 const express = require('express');
-const apiRouter = require('./api/api');
+const envelopesRouter = require('./api/envelopes');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json()); 
-app.use('/envelopes', apiRouter);
+app.use('/envelopes', envelopesRouter);
 
 
 app.get('', (req, res, next) => {
