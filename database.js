@@ -43,7 +43,7 @@ async function createTransactionsTable() {
     envelope_id INTEGER NOT NULL REFERENCES Envelopes(id) ON DELETE CASCADE,
     recipient TEXT NOT NULL, 
     amount INTEGER NOT NULL CHECK (amount > 0),
-    transaction_date DATE NOT NULL DEFAULT CURRENT_DATE
+    date DATE NOT NULL DEFAULT CURRENT_DATE
     )`;
     try {
         await pool.query(query);
