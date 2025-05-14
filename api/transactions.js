@@ -205,3 +205,5 @@ transactionsRouter.delete('/:transactionId', async (req, res, next) => {
     }
 });
 
+
+module.exports = transactionsRouter;
