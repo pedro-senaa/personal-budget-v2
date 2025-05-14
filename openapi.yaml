@@ -1,0 +1,240 @@
+openapi: 3.0.3
+info:
+  title: Personal Budget API
+  version: 1.0.0
+  description: API to manage envelopes and transactions in a personal budgeting app
+
+servers:
+  - url: http://localhost:8080
+    description: Local server
+
+paths:
+  /envelopes:
+    get:
+      summary: Get all envelopes
+      responses:
+        200:
+          description: List of all envelopes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/envelopeSchema'
+        500:
+          $ref: '#/components/responses/serverError'
+
+    post:
+      summary: Create a new envelope
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/envelopeSchema'
+      responses:
+        201:
+          description: Envelope created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/envelopeSchema'
+        400:
+          description: Invalid input
+        500:
+          $ref: '#/components/responses/serverError'
+
+  /envelopes/{envelopeId}:
+    parameters:
+      - name: envelopeId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    get:
+      summary: Get envelope by ID
+      responses:
+        200:
+          description: Envelope found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/envelopeSchema'
+        404:
+          description: Envelope not found
+        500:
+          $ref: '#/components/responses/serverError'
+
+    put:
+      summary: Update envelope
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/envelopeSchema'
+      responses:
+        200:
+          description: Envelope updated
+        400:
+          description: Invalid data
+        404:
+          description: Envelope not found
+        500:
+          $ref: '#/components/responses/serverError'
+
+    delete:
+      summary: Delete envelope
+      responses:
+        200:
+          description: Envelope deleted
+        404:
+          description: Envelope not found
+        500:
+          $ref: '#/components/responses/serverError'
+
+  /transactions:
+    get:
+      summary: Get all transactions
+      responses:
+        200:
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/transactionSchema'
+        500:
+          $ref: '#/components/responses/serverError'
+
+    post:
+      summary: Create a new transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/transactionSchema'
+      responses:
+        201:
+          description: Transaction created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/transactionSchema'
+        400:
+          description: Invalid input
+        500:
+          $ref: '#/components/responses/serverError'
+
+  /transactions/{transactionId}:
+    parameters:
+      - name: transactionId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    get:
+      summary: Get transaction by ID
+      responses:
+        200:
+          description: Transaction found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/transactionSchema'
+        404:
+          description: Transaction not found
+        500:
+          $ref: '#/components/responses/serverError'
+
+    put:
+      summary: Update transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/transactionSchema'
+      responses:
+        200:
+          description: Transaction updated
+        400:
+          description: Invalid input
+        404:
+          description: Transaction not found
+        500:
+          $ref: '#/components/responses/serverError'
+
+    delete:
+      summary: Delete transaction
+      responses:
+        200:
+          description: Transaction deleted
+        404:
+          description: Transaction not found
+        500:
+          $ref: '#/components/responses/serverError'
+
+components:
+  schemas:
+    envelopeSchema:
+      type: object
+      required:
+        - id
+        - name
+        - amount
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "Groceries"
+        amount:
+          type: integer
+          example: 500
+
+    transactionSchema:
+      type: object
+      required:
+        - id
+        - envelope_id
+        - recipient
+        - amount
+        - date
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1001
+        envelope_id:
+          type: integer
+          format: int64
+          example: 1
+        recipient:
+          type: string
+          example: "Supermarket"
+        amount:
+          type: integer
+          example: 75
+        date:
+          type: string
+          format: date
+          example: "2025-05-14"
+
+  responses:
+    serverError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Internal server error
